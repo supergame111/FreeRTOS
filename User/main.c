@@ -17,26 +17,30 @@
   
 #include "stm32f10x.h"
 
-#include<stdio.h>
-
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
 
-const char *pcTextForTask1 = "Task 1 is runing\r\n";
-const char *pcTextForTask2 = "Task 2 is runing\r\n";
+#include "led.h"
 
-void vTaskFunction(void *pvParameters)
+void vTaskFunction1(void *pvParameters)
 {
-	char *pcTaskName;
-	
-	pcTaskName = (char *)pvParameters;
-	
 	for(;;)
 	{
-		printf("%s", pcTaskName);
-		vTaskDelay(250/portTICK_PERIOD_MS);
+		LED1(ON);
+		vTaskDelay(250);
+		LED1(OFF);
+		vTaskDelay(250);
+	}
+}
+
+void vTaskFunction2(void *pvParameters)
+{
+	for(;;)
+	{
+		LED2_TOGGLE();
+		vTaskDelay(1000);
 	}
 }
 
@@ -47,8 +51,10 @@ void vTaskFunction(void *pvParameters)
   */
 int main(void)
 {
-	xTaskCreate(vTaskFunction, "Task 1", 1000, (void *)pcTextForTask1, 1, NULL);
-	xTaskCreate(vTaskFunction, "Task 2", 1000, (void *)pcTextForTask2, 2, NULL);
+	__set_PRIMASK(1);
+	LED_GPIO_Config();
+	xTaskCreate(vTaskFunction1, "Task 1", 1000, NULL, 1, NULL);
+	xTaskCreate(vTaskFunction2, "Task 2", 1000, NULL, 1, NULL);
 	
 	vTaskStartScheduler();
   for(;;);
