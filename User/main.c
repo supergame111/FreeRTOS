@@ -17,6 +17,29 @@
   
 #include "stm32f10x.h"
 
+#include<stdio.h>
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
+const char *pcTextForTask1 = "Task 1 is runing\r\n";
+const char *pcTextForTask2 = "Task 2 is runing\r\n";
+
+void vTaskFunction(void *pvParameters)
+{
+	char *pcTaskName;
+	
+	pcTaskName = (char *)pvParameters;
+	
+	for(;;)
+	{
+		printf("%s", pcTaskName);
+		vTaskDelay(250/portTICK_PERIOD_MS);
+	}
+}
+
 /**
   * @brief  主函数
   * @param  无
@@ -24,8 +47,11 @@
   */
 int main(void)
 {
-  	  while(1);
-	  /* add your code here ^_^. */
+	xTaskCreate(vTaskFunction, "Task 1", 1000, (void *)pcTextForTask1, 1, NULL);
+	xTaskCreate(vTaskFunction, "Task 2", 1000, (void *)pcTextForTask2, 2, NULL);
+	
+	vTaskStartScheduler();
+  for(;;);
 }
 
 /*********************************************END OF FILE**********************/
