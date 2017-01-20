@@ -21,8 +21,17 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-
 #include "led.h"
+
+void vTaskFunctionForTaskInFo(void *pvParameters)
+{
+  uint8_t pcWriteBuffer[500];
+
+  printf("=================================================\r\n");
+  printf("任务名 任务状态 优先级 剩余栈 任务序号\r\n");
+  vTaskList((char *)&pcWriteBuffer);
+  printf("%s\r\n", pcWriteBuffer);
+}
 
 void vTaskFunction1(void *pvParameters)
 {

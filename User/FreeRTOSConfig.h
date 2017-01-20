@@ -91,7 +91,6 @@
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 128 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( 17 * 1024 ) ) //定义堆大小
 #define configMAX_TASK_NAME_LEN		( 16 )
-#define configUSE_TRACE_FACILITY	0
 #define configUSE_16_BIT_TICKS		0
 #define configIDLE_SHOULD_YIELD		1
 
@@ -133,6 +132,19 @@ NVIC value of 255. */
 #define vPortSVCHandler SVC_Handler
 #define xPortPendSVHandler PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
+
+/* define configASSERT() */
+//#define configASSERT((x)) if((x)==0) vAssertCalled(__FILE__, __LINE__)
+
+#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
+    #include <stdint.h>
+    extern volatile uint32_t ulHighFrequencyTimerTicks;
+#endif
+
+#define configUSE_TRACE_FACILITY 1
+#define configGENERATE_RUN_TIME_STATS 1
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
+#define portGET_RUN_TIME_COUNTER_VALUE() ulHighFrequencyTimerTicks
 
 #endif /* FREERTOS_CONFIG_H */
 
